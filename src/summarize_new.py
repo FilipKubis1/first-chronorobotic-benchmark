@@ -14,10 +14,10 @@ def summarize(text_file_to_analyze):
     ordering_by_lower_mean_weight = np.min(data[:, [-3, -2]], axis=1)  
     ordered_kills = data[ordering_by_lower_mean_weight.argsort(kind='mergesort'), -1]  # ordering kills by weights
     cummulative_kills = np.cumsum(ordered_kills)
-    print('expected service social cost: ' + str(np.mean(cummulative_kills)))
-    print('service social cost, servicing ratio 100%: ' + str(cummulative_kills[-1]))
-    print('service social cost, servicing ratio 90%: ' + str(cummulative_kills[int(len(cummulative_kills)*0.9)]))
-    print('service social cost, servicing ratio 50%: ' + str(cummulative_kills[int(len(cummulative_kills)*0.5)]))
+    print(('expected service social cost: ' + str(np.mean(cummulative_kills))))
+    print(('service social cost, servicing ratio 100%: ' + str(cummulative_kills[-1])))
+    print(('service social cost, servicing ratio 90%: ' + str(cummulative_kills[int(len(cummulative_kills)*0.9)])))
+    print(('service social cost, servicing ratio 50%: ' + str(cummulative_kills[int(len(cummulative_kills)*0.5)])))
 
     plt.plot(cummulative_kills)
     plt.savefig(text_file_to_analyze + '.png')
@@ -46,7 +46,7 @@ def summarize(text_file_to_analyze):
         ordered = data[ordering.argsort(kind='mergesort'), -1]  # ordering kills by weights
         new_way_cum += ordered
     cummulative_kills = np.cumsum(new_way_cum)
-    print('improved expected service social cost: ' + str(np.mean(cummulative_kills)))
-    print('improved service social cost, servicing ratio 100%: ' + str(cummulative_kills[-1]))
-    print('improved service social cost, servicing ratio 90%: ' + str(cummulative_kills[int(len(cummulative_kills)*0.9)]))
-    print('improved service social cost, servicing ratio 50%: ' + str(cummulative_kills[int(len(cummulative_kills)*0.5)]))
+    print(('improved expected service social cost: ' + str(np.mean(cummulative_kills))))
+    print(('improved service social cost, servicing ratio 100%: ' + str(cummulative_kills[-1])))
+    print(('improved service social cost, servicing ratio 90%: ' + str(cummulative_kills[int(len(cummulative_kills)*0.9)])))
+    print(('improved service social cost, servicing ratio 50%: ' + str(cummulative_kills[int(len(cummulative_kills)*0.5)])))

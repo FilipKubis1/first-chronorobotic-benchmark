@@ -37,7 +37,7 @@ edges_of_cell = [0.5, 0.5]
 speed = 1.
 
 for model in models:
-    print 'testing  ' + model
+    print('testing  ' + model)
     try:
         os.mkdir('../results/' + str(model))
     except OSError as error:

@@ -64,7 +64,7 @@ edges_of_cell = [0.5, 0.5]
 speed = 1.
 
 for model in models:
-    print 'testing  ' + model
+    print('testing  ' + model)
     # creating path for the outputs of planner
     try:
         #os.mkdir('../results/lot_of_models')
@@ -91,7 +91,7 @@ for model in models:
 
 for model in models:
 
-    print '\n statistics of ' + model
+    print('\n statistics of ' + model)
     #output_path = '../results/lot_of_models/' + str(model) + '_output.txt'
     output_path = '../results/lot_of_models_testing2/' + str(model) + '_output.txt'
     #summarize.summarize(output_path)

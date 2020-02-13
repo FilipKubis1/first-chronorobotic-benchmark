@@ -283,7 +283,7 @@ class PathFinder:
     def extract_path(self):
         positions = np.zeros((len(self.shortest_path), 2))
 
-        for i in xrange(len(self.shortest_path)):
+        for i in range(len(self.shortest_path)):
             x, y = self.get_real_coordinate(self.shortest_path[i][0], self.shortest_path[i][1])
             positions[i, 0] = x
             positions[i, 1] = y
@@ -295,7 +295,7 @@ class PathFinder:
         self.trajectory = []
         time = start_time
 
-        for i in xrange(1, self.shortest_path_real.shape[0]):
+        for i in range(1, self.shortest_path_real.shape[0]):
             if self.shortest_path_real[i - 1, 0] == self.shortest_path_real[i, 0] and self.shortest_path_real[i - 1, 1] == self.shortest_path_real[i, 1]:
                 continue
             distance = (((self.shortest_path_real[i - 1, 0] - self.shortest_path_real[i, 0]) ** 2) + ((self.shortest_path_real[i - 1, 1] - self.shortest_path_real[i, 1]) ** 2)) ** 0.5
@@ -321,13 +321,13 @@ class PathFinder:
         self.shortest_path = []
             
         try:
-            for i in xrange(1, len(route)):
+            for i in range(1, len(route)):
                 src = self.get_index(route[i-1][0], route[i-1][1])
                 dst = self.get_index(route[i][0], route[i][1])
                 print(src)
                 print(dst)
                 self.shortest_path.extend(list(networkx.dijkstra_path(self.graph, src, dst)))
-                print(list(networkx.dijkstra_path(self.graph, src, dst)))
+                print((list(networkx.dijkstra_path(self.graph, src, dst))))
 
             # from  get_real_coordinate: (self.x_min + x_length*column - x_length*0.5, self.y_max - y_length*row + y_length*0.5)
             self.shortest_path_real = np.array(self.shortest_path, dtype=np.float64)
@@ -345,7 +345,7 @@ class PathFinder:
                 
 
         except networkx.NetworkXError:
-            print "no path!"
+            print("no path!")
 
         return self.shortest_path
 
@@ -409,10 +409,10 @@ class PathFinder:
         directions = [0, np.pi/4, np.pi/2, 3*np.pi/4, np.pi, -3*np.pi/4, -np.pi/2, -np.pi/4]
         k = 0
         centers = np.zeros((self.shape[0]*self.shape[1]*8, 3))
-        for j in xrange(self.shape[1]):
-            for i in xrange(self.shape[0]):
+        for j in range(self.shape[1]):
+            for i in range(self.shape[0]):
                 x, y = self.get_real_coordinate(i, j)
-                for z in xrange(8):
+                for z in range(8):
                     centers[k, 0] = x
                     centers[k, 1] = y
                     centers[k, 2] = directions[z]
@@ -422,7 +422,7 @@ class PathFinder:
 
     def get_path_weight(self):
         total_weight = 0
-        for i in xrange(len(self.shortest_path)-1):
+        for i in range(len(self.shortest_path)-1):
             weight = self.graph.get_edge_data(self.shortest_path[i], self.shortest_path[i+1])
             if weight != None:
                 total_weight += weight['weight']
@@ -431,8 +431,8 @@ class PathFinder:
 
     def get_mean_path_weight(self):
         total_weight = 0.
-        print(len(self.shortest_path))
-        for i in xrange(len(self.shortest_path)-1):
+        print((len(self.shortest_path)))
+        for i in range(len(self.shortest_path)-1):
             weight = self.graph.get_edge_data(self.shortest_path[i], self.shortest_path[i+1])
             if weight != None:
                 total_weight += weight['weight']
@@ -457,5 +457,5 @@ if __name__ == "__main__":
 
     data = np.loadtxt(testing_data_path)
     path_finder.extract_trajectory(np.min(data[:, 0]), speed=1)
-    print path_finder.get_path_weight()
-    print path_finder.extract_interactions(testing_data_path, 2.)
+    print(path_finder.get_path_weight())
+    print(path_finder.extract_interactions(testing_data_path, 2.))

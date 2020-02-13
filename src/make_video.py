@@ -38,11 +38,11 @@ class VideoMaker:
 
     def _draw_grid(self, frame, line_color=(0, 255, 0), thickness=1, type=cv2.LINE_AA):
 
-        for i in xrange(int(self.x_min), int(self.x_max), 1):
+        for i in range(int(self.x_min), int(self.x_max), 1):
             x, y = self.get_frame_index(i, self.y_min)
             cv2.line(frame, (x, 0), (x, y), color=line_color, lineType=type, thickness=thickness)
 
-        for i in xrange(int(self.y_min), int(self.y_max), 1):
+        for i in range(int(self.y_min), int(self.y_max), 1):
             x, y = self.get_frame_index(self.x_max, i)
             cv2.line(frame, (x, y), (0, y), color=line_color, lineType=type, thickness=thickness)
 
@@ -56,7 +56,7 @@ class VideoMaker:
         frame = cv2.cvtColor(np.full(self.shape, 255, np.uint8), cv2.COLOR_GRAY2BGR)
         self._draw_grid(frame, (150, 150, 150), 1, cv2.LINE_4)
         borders = np.loadtxt(self.path_borders)
-        for i in xrange(len(borders[:, 0])):
+        for i in range(len(borders[:, 0])):
             pos = self.get_frame_index(borders[i, 0], borders[i, 1])
             cv2.circle(frame, pos, int(0.1 * self.size_factor),
                        (0, 0, 0), int(0.05 * self.size_factor))
@@ -131,7 +131,7 @@ class VideoMaker:
                 write_flag = False
 
         cv2.destroyAllWindows()
-        print 'saving video ' + str(output_file)
+        print('saving video ' + str(output_file))
         out.release()
 
 

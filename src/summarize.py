@@ -30,13 +30,13 @@ def summarize(text_file_to_analyze):
     for idx, kills in enumerate(worst_scenario_ordered_kills):
         if part_kills + kills > 20:
             print(text_file_to_analyze)
-            print('ratio of refused walks needed to kill less then 20 people during the whole day: ' + str(
-                1.0 - (float(idx) / float(len(worst_scenario_ordered_kills)))))
-            print('clockwise_default_kills: ' + str(clockwise_default_kills))
-            print('clockwise_model_kills: ' + str(clockwise_model_kills))
-            print('counter_clockwise_default_kills: ' + str(counter_clockwise_default_kills))
-            print('counter_clockwise_model_kills: ' + str(counter_clockwise_model_kills))
-            print('model_chosen_kills: ' + str(model_chosen_kills))
+            print(('ratio of refused walks needed to kill less then 20 people during the whole day: ' + str(
+                1.0 - (float(idx) / float(len(worst_scenario_ordered_kills))))))
+            print(('clockwise_default_kills: ' + str(clockwise_default_kills)))
+            print(('clockwise_model_kills: ' + str(clockwise_model_kills)))
+            print(('counter_clockwise_default_kills: ' + str(counter_clockwise_default_kills)))
+            print(('counter_clockwise_model_kills: ' + str(counter_clockwise_model_kills)))
+            print(('model_chosen_kills: ' + str(model_chosen_kills)))
             print('')
             break
         else:
@@ -75,12 +75,12 @@ if __name__ == "__main__":
         for idx, kills in enumerate(worst_scenario_ordered_kills):
             if part_kills + kills > 20:
                 print(text_file_to_analyze)
-                print('ratio of refused walks needed to kill less then 20 people during the whole day: ' + str(1.0 - (float(idx)/float(len(worst_scenario_ordered_kills)))))
-                print('clockwise_default_kills: ' + str(clockwise_default_kills))
-                print('clockwise_model_kills: ' + str(clockwise_model_kills))
-                print('counter_clockwise_default_kills: ' + str(counter_clockwise_default_kills))
-                print('counter_clockwise_model_kills: ' + str(counter_clockwise_model_kills))
-                print('model_chosen_kills: ' + str(model_chosen_kills))
+                print(('ratio of refused walks needed to kill less then 20 people during the whole day: ' + str(1.0 - (float(idx)/float(len(worst_scenario_ordered_kills))))))
+                print(('clockwise_default_kills: ' + str(clockwise_default_kills)))
+                print(('clockwise_model_kills: ' + str(clockwise_model_kills)))
+                print(('counter_clockwise_default_kills: ' + str(counter_clockwise_default_kills)))
+                print(('counter_clockwise_model_kills: ' + str(counter_clockwise_model_kills)))
+                print(('model_chosen_kills: ' + str(model_chosen_kills)))
                 print('')
                 break
             else:
