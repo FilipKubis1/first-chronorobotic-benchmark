@@ -17,14 +17,18 @@ class GMMFremenModel:
 
         :param training_data: numpy array of shape (n_samples, n_features)
         :param training_times: timestamps
-        :param step: in seconds
+        :param step: in seconds - discretizes measurements to create time series for fremen
         :return: self
         """
+
+        # fit gmm to get clusters
         self.gmm_model.fit(training_data)
+
+        # get "correspondence matrix" of posterior probabilities of each point belonging to different clusters
         self.gmm_model.weights_ = np.ones(self.gmm_model.n_components) / self.gmm_model.n_components
         u_matrix = self.gmm_model.predict_proba(training_data)
 
-        # for each training times: compute alphas
+        # for each training time: compute alphas
         t0 = training_times.min()
         tn = training_times.max()
         last_index = int((tn - t0) // step)
@@ -35,7 +39,7 @@ class GMMFremenModel:
             t_index = int((t - t0) // step)
             alphas[t_index, :] += u_matrix[i, :]
 
-        # normalize alphas to one second
+        # normalize alphas to correspond to one second
         alphas /= step
 
         # train fremen for each cluster
@@ -45,8 +49,16 @@ class GMMFremenModel:
 
         return self
 
-    def predict_densities(self, data, times, step):
-        # get alpha of each fremen for each time
+    def predict_densities(self, data, times, step=1):
+        """
+
+        :param data: np.array (n, 2) of data to predict
+        :param times: np.array (n, ) of the times of data to predict
+        :param step: in seconds, factor of alphas
+        :return: np.array(n, ) densities
+        """
+
+        # get alpha of each fremen for each time and
         alphas = np.array([model.predict(times) for model in self.fremen_models]) * step
 
         # get pdf value from each cluster for each datapoint
@@ -58,6 +70,16 @@ class GMMFremenModel:
         return np.sum(alphas * pdfs, axis=0)
 
     def predict_for_grid(self, times, grid_shape, first_cell, step, cell_dimensions=(1, 1)):
+        """
+
+        :param times: np.array (t, ) of the times of the data to predict
+        :param grid_shape: (n, m) tuple
+        :param first_cell: (x0, y0) tuple
+        :param step: in seconds, factor of alpha
+        :param cell_dimensions: (x, y) tuple
+        :return: np.array (n, m, t)
+        """
+
         # create grid
         grid = np.array([[first_cell[0] + cell_dimensions[0] * x, first_cell[1] + cell_dimensions[1] * y]
                          for x in range(grid_shape[0]) for y in range(grid_shape[1])])

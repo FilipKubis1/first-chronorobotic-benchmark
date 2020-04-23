@@ -17,7 +17,7 @@ def save_prediction_into_model_no_angle(pred, times, directory):
                 y_real = y / 2 + y_low
                 for x in range(x_max):
                     x_real = x / 2 + x_low
-                    f.write("{} {} {} {}\n".format(x_real, y_real, a_real, pred[x, y, t]))
+                    f.write("{} {} {} {}\n".format(x_real, y_real, a_real, max(0, pred[x, y, t])))
 
 
 def main():
