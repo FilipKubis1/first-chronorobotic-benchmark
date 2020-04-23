@@ -49,31 +49,32 @@ def main():
     # load data
     data_all = np.load(config.train_array)
 
-    # prepare the robot positions to filter the data #
-    # positions, radius, and movement speed
-    x, y, r, delta = -3, 6, 1, 1
+    for r in [0.5, 1, 2]:
+        # prepare the robot positions to filter the data #
+        # positions, radius, and movement speed
+        x, y, delta = -3, 6, 1
 
-    # border of the corridor
-    border = Polygon([(-9.25, 0.1), (-9.25, 12.8), (3, 12.8), (3, 0.1)])
+        # border of the corridor
+        border = Polygon([(-9.25, 0.1), (-9.25, 12.8), (3, 12.8), (3, 0.1)])
 
-    # times
-    t0 = int(datetime(2019, 3, 2, 2, 19, 0).timestamp())
-    tn = int(datetime(2019, 3, 28, 21, 13, 30).timestamp())
-    n_times = (tn - t0) // 30
+        # times
+        t0 = int(datetime(2019, 3, 2, 2, 19, 0).timestamp())
+        tn = int(datetime(2019, 3, 28, 21, 13, 30).timestamp())
+        n_times = (tn - t0) // 30
 
-    # gets robot position for each time
-    robot_positions = np.zeros((n_times, 2))
-    for i in range(n_times):
-        robot_positions[i] = x, y
-        x, y = get_new_position(x, y, delta, border)
+        # gets robot position for each time
+        robot_positions = np.zeros((n_times, 2))
+        for i in range(n_times):
+            robot_positions[i] = x, y
+            x, y = get_new_position(x, y, delta, border)
 
-    # filter data based on robot positions and radius #
-    # get time indices for each measurement
-    time_indices = np.vectorize(lambda t: int(round((t - t0) / 30)))(data_all[:, 0])
+        # filter data based on robot positions and radius #
+        # get time indices for each measurement
+        time_indices = np.vectorize(lambda t: int(round((t - t0) / 30)))(data_all[:, 0])
 
-    # filter data and save it
-    data_filtered = filter_data(data_all, time_indices, robot_positions, r)
-    np.save(config.resources + 'robot_data_random_r2.npy', data_filtered)
+        # filter data and save it
+        data_filtered = filter_data(data_all, time_indices, robot_positions, r)
+        np.save(config.resources + 'robot_data_random_r{}.npy'.format(r), data_filtered)
 
 
 if __name__ == '__main__':
