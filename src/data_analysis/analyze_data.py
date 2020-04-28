@@ -2,9 +2,23 @@ import numpy as np
 from matplotlib import pyplot as plt
 from config import config
 from datetime import datetime
+from shapely.geometry import Polygon, Point
 
 
 week_days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+
+def points_in_poly(arr, poly: Polygon):
+    res = np.zeros(arr.shape[0]).astype(np.bool)
+    for i in range(arr.shape[0]):
+        res[i] = poly.contains(Point(arr[i, 1], arr[i, 2]))
+    return res
+
+
+def visualize_space_in_polygon(arr, poly: Polygon):
+    plt.plot(arr[:, 1], arr[:, 2], 'b.')
+    plt.plot(*poly.exterior.xy)
+    plt.show()
 
 
 def visualize_space(arr):
@@ -26,6 +40,8 @@ def show_max_min(arr):
     times = np.vectorize(lambda x: datetime.fromtimestamp(x))(arr[:, 0])  # returns array of datetimes
     print('t_min: {}'.format(times.min()))
     print('t_max: {}'.format(times.max()))
+    print('t_min: {}'.format(arr[:, 0].min()))
+    print('t_max: {}'.format(arr[:, 0].max()))
 
 
 def analyze_measurement_times(arr):
@@ -44,11 +60,13 @@ def analyze_measurement_times(arr):
 
 
 def main():
-    arr = np.load(config.train_array)
+    arr = np.load(config.england_train_arr)
+    # visualize_space_in_polygon(arr, Polygon([(-7.5, 1), (-7.5, -3), (10.5, -3), (10.5, 1),
+    #                                          (1.5, 1), (1.5, 17), (-0.5, 17), (-0.5, 1)]))
     # visualize_space(arr)
     # visualize_time(arr)
     show_max_min(arr)
-    # analyze_measurement_times(arr)
+    analyze_measurement_times(arr)
 
 
 if __name__ == '__main__':

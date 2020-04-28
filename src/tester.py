@@ -13,7 +13,8 @@ class Tester:
     def __init__(self, radius_of_robot):
         self.radius_of_robot = radius_of_robot
 
-    def test_model(self, path_model, path_data, testing_time, model_name, edges_of_cell=np.array([0.5, 0.5]), speed=1.0, create_video=False):
+    def test_model(self, path_model, path_data, testing_time, model_name, route, edges_of_cell=np.array([0.5, 0.5]),
+                   speed=1.0, remove_walls=True, create_video=False):
         '''
 
         :param path_model: path for the model output in following format; x y angle weight
@@ -45,7 +46,7 @@ class Tester:
             #print(np.allclose(test_data,test_data_2))
         try:
             #test_data = pd.read_csv(path_data, sep=' ', header=None, engine='c', float_precision='round_trip', usecols=[0, 1, 2, 7]).values#float_precision='round-trip' returns exatly what numpy
-            test_data = pd.read_csv(path_data, sep=' ', header=None, engine='c', usecols=[0, 1, 2, 7]).values#float_precision='round-trip' returns exatly what numpy
+            test_data = pd.read_csv(path_data, sep=' ', header=None, engine='c', usecols=[0, 1, 2, 3]).values#float_precision='round-trip' returns exatly what numpy
         #except pd.parser.CParserError:
         except pandas.io.common.EmptyDataError:
             test_data = np.array([])
@@ -65,12 +66,10 @@ class Tester:
 
         #route = [(-5, 10), (2, 3), (-7, 1), (-5, 10)]           # clockwise route
         #reverse_route = [(-5, 10), (-7, 1), (2, 3), (-5, 10)]   # counter-clockwise route
-        route = np.array([(-5.0, 9.75), (2.0, 2.75), (-7.0, 0.75), (-5.0, 9.75)])           # clockwise route
-        reverse_route = np.array([(-5.0, 9.75), (-7.0, 0.75), (2.0, 2.75), (-5.0, 9.75)])   # counter-clockwise route
+        # route = np.array([(-5.0, 9.75), (2.0, 2.75), (-7.0, 0.75), (-5.0, 9.75)])           # clockwise route
         path_borders = '../data/artificial_boarders_of_space_in_UTBM.txt'
         #walls = np.loadtxt(path_borders)
         #walls = pd.read_csv(path_borders, sep=' ', header=None, engine='c', float_precision='round_trip').values#float_precision='round-trip' returns exatly what numpy
-        walls = pd.read_csv(path_borders, sep=' ', header=None, engine='c').values#float_precision='round-trip' returns exatly what numpy
         results.append(int(testing_time))
         results.append(number_of_detections)
 
@@ -127,7 +126,10 @@ class Tester:
         #print(finish-start)
 
         #start = time()
-        path_finder.remove_walls(walls)
+        if remove_walls is True:
+            walls = pd.read_csv(path_borders, sep=' ', header=None,
+                                engine='c').values  # float_precision='round-trip' returns exatly what numpy
+            path_finder.remove_walls(walls)
         #finish = time()
         #print('remove_walls')
         #print(finish-start)
@@ -163,7 +165,7 @@ class Tester:
 
         # counter-clockwise
         #start = time()
-        path_finder.find_shortest_path(route=reverse_route)
+        path_finder.find_shortest_path(route=route)
         #finish = time()
         #print('find_shortest_path')
         #print(finish-start)

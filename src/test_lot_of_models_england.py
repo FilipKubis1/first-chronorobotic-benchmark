@@ -28,38 +28,39 @@ Since this code is prepared in a short time for scientific reasons, sorry in adv
 """
 
 tester = tester.Tester(radius_of_robot=1.)
-times = np.loadtxt('../data/test_times.txt', dtype='int')
+times = np.loadtxt(config.england_test_times, dtype='int')
 
 # models, we need to compare
 # models = ['gmm_fremen', 'gmm_fremen_r0.5', 'gmm_fremen_r1', 'gmm_fremen_r2', 'fremen', 'daily']
-models = ['daily']
+# models = ['gmm_fremen']
 
 france_route = np.array([(-5.0, 9.75), (2.0, 2.75), (-7.0, 0.75), (-5.0, 9.75)])
 england_route = np.array([(-6.0, -0.5), (10.0, -0.5), (1.0, 14.5), (-6.0, -0.5)])
 
-# models = ['gmm_fremen_c_{}_p_{}'.format(c, p) for c in [3, 5] for p in [3, 5]]
+models = ['gmm_fremen_c_{}_p_{}'.format(c, p) for c in [3, 5] for p in [3, 5]]
 
-edges_of_cell = [0.5, 0.5]
+edges_of_cell = [1, 1]
 speed = 1.
 
 for model in models:
     print('testing  ' + model)
     # creating path for the outputs of planner
     try:
-        os.mkdir('../results/lot_of_models_testing2')
+        os.mkdir('../results/lot_of_models_testing_eng')
     except OSError as error:
         pass
 
-    output_path = '../results/lot_of_models_testing2/' + str(model) + '_output.txt'
+    output_path = '../results/lot_of_models_testing_eng/' + str(model) + '_output.txt'
     if os.path.exists(output_path):
         os.remove(output_path)
 
     for time in times:
-        path_model = config.models + str(model) + '/' + str(time) + '_model.txt'
-        test_data_path = config.time_windows + str(time) + '_test_data.txt'
+        path_model = config.england_models + str(model) + '/' + str(time) + '_model.txt'
+        test_data_path = config.england + 'time_windows/' + str(time) + '_test_data.txt'
 
         result = tester.test_model(path_model=path_model, path_data=test_data_path, testing_time=time,
-                                   model_name=model, route=france_route, edges_of_cell=edges_of_cell,
+                                   model_name=model, route=england_route,
+                                   remove_walls=False, edges_of_cell=edges_of_cell,
                                    speed=speed, create_video=False)
         with open(output_path, 'a') as file:
             file.write(' '.join(str(value) for value in result) + '\n')
@@ -67,5 +68,5 @@ for model in models:
 for model in models:
 
     print('\n statistics of ' + model)
-    output_path = '../results/lot_of_models_testing2/' + str(model) + '_output.txt'
+    output_path = '../results/lot_of_models_testing_eng/' + str(model) + '_output.txt'
     summarize_new.summarize(output_path)

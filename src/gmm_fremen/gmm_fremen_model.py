@@ -4,13 +4,14 @@ from sklearn.mixture import GaussianMixture
 from config import config
 from src.gmm_fremen.fremen import Fremen
 from scipy.stats import multivariate_normal
+import scipy.stats as st
 
 
 class GMMFremenModel:
 
-    def __init__(self, n_components: int = 5):
+    def __init__(self, n_components: int = 5, n_periodicities: int = 10):
         self.gmm_model = GaussianMixture(n_components=n_components)
-        self.fremen_models = np.array([Fremen(periods_to_include=15, periods_to_consider=200) for _ in range(n_components)])
+        self.fremen_models = np.array([Fremen(periods_to_include=n_periodicities, periods_to_consider=100) for _ in range(n_components)])
 
     def fit(self, training_data, training_times, step):
         """
@@ -69,7 +70,28 @@ class GMMFremenModel:
         # return sum of alpha_i * pdf_i for each data point
         return np.sum(alphas * pdfs, axis=0)
 
-    def predict_for_grid(self, times, grid_shape, first_cell, step, cell_dimensions=(1, 1)):
+    def predict_chi_square(self, data, times, step=1):
+        """
+
+                :param data: np.array (n, 2) of data to predict
+                :param times: np.array (n, ) of the times of data to predict
+                :param step: in seconds, factor of alphas
+                :return: np.array(n, ) densities
+                """
+        alphas = np.array([model.predict(times) for model in self.fremen_models]) * step
+
+        chi_squared = np.zeros((self.gmm_model.n_components, times.size))
+        for i in range(times.size):
+            for j in range(self.gmm_model.n_components):
+                PREC = self.gmm_model.precisions_[j, :, :]
+                X_C = data[i, :] - self.gmm_model.means_[j, :]
+                chi_squared[j, i] = self.get_chi_2(PREC, X_C)
+
+    def get_chi_2(self, PREC, X_C):
+        c_dist_x = np.sum(np.dot(X_C, PREC) * X_C)
+        return st.chi2._sf(c_dist_x, 2)
+
+    def predict_for_grid(self, times, grid_shape, first_cell, step, cell_dimensions=(1, 1), chi_sq=False):
         """
 
         :param times: np.array (t, ) of the times of the data to predict
@@ -89,9 +111,14 @@ class GMMFremenModel:
         alphas = np.array([model.predict(times) for model in self.fremen_models]) * step * cell_volume
 
         # get pdf value from each cluster for each grid cell
-        prob_densities = np.array([multivariate_normal.pdf(grid, mean=self.gmm_model.means_[i, :],
-                                                 cov=self.gmm_model.covariances_[i, :, :])
-                         for i in range(self.gmm_model.n_components)])
+        if chi_sq:
+            prob_densities = np.array([[self.get_chi_2(self.gmm_model.precisions_[j, :, :], grid[i, :] - self.gmm_model.means_[j, :])
+                for i in range(grid_shape[0] * grid_shape[1])]for j in range(self.gmm_model.n_components)])
+        else:
+            prob_densities = np.array([multivariate_normal.pdf(grid, mean=self.gmm_model.means_[i, :],
+                                                     cov=self.gmm_model.covariances_[i, :, :])
+                             for i in range(self.gmm_model.n_components)])
+
         prob_densities_trans = prob_densities.T
 
         # create empty array for predictions
@@ -121,11 +148,10 @@ class GMMFremenModel:
 
 def main():
     arr = np.load(config.train_array)
-    model = GMMFremenModel(5)
+    model = GMMFremenModel(20)
     model.fit(arr[:, 1:], arr[:, 0], step=10*60)
     model.save_model(config.gmm_fremen + 'model')
-    # model.load_model(config.gmm_fremen + 'model')
-    # model.predict_for_grid()
+    print(1)
 
 
 if __name__ == '__main__':
