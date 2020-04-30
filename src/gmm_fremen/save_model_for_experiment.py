@@ -20,13 +20,14 @@ def save_prediction_into_model_no_angle(pred, times, directory):
     mins_for_times = np.min(np.min(pred, axis=0), axis=0)
     for t in range(n_times):
         f = open(directory + str(times[t]) + "_model.txt", "w")
-        for a in range(8):
-            a_real = (a - 3) * (np.pi / 4)
-            for y in range(y_max):
-                y_real = y / 2 + y_low
-                for x in range(x_max):
-                    x_real = x / 2 + x_low
-                    f.write("{} {} {} {}\n".format(x_real, y_real, a_real, pred[x, y, t] - mins_for_times[t]))
+        for y in range(y_max):
+            y_real = y / 2 + y_low
+            for x in range(x_max):
+                x_real = x / 2 + x_low
+                f.write("{} {} {}\n".format(x_real, y_real, pred[x, y, t] - mins_for_times[t]))
+        f.close()
+        arr = np.loadtxt(directory + str(times[t]) + "_model.txt")
+        np.save(directory + str(times[t]) + "_model.npy", arr[:, 2])
 
 
 def save_predictions_in_polygon_into_model_no_angle(pred, times, directory, poly: Polygon):
@@ -108,5 +109,6 @@ def save_femgmm():
 
 if __name__ == '__main__':
     # main()
+    save_lot_of_models(clusters=[5], periodicities=[5], step=3600)
     # save_lot_of_models_england(clusters=[3, 5], periodicities=[3, 5], step=3600)
-    save_femgmm()
+    # save_femgmm()
