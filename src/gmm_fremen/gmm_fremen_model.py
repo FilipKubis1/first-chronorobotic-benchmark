@@ -18,7 +18,7 @@ class GMMFremenModel:
 
         :param training_data: numpy array of shape (n_samples, n_features)
         :param training_times: timestamps
-        :param step: in seconds - discretizes measurements to create time series for fremen
+        :param step: in seconds - discretization step of measurements to create time series for fremen
         :return: self
         """
 

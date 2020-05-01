@@ -47,7 +47,9 @@ def uniform(p, n):
     return np.array([int(round(i * step)) for i in range(n)])
 
 
-def in_measurement_window(t, t0, step, measurement_times):
+def in_measurement_window(t, step, measurement_times):
+    t_datetime = datetime.fromtimestamp(t)
+    t0 = datetime(t_datetime.year, t_datetime.month, t_datetime.day, 0, 0, 0).timestamp()
     rounded_time = t0 + (((t - t0) // step) * step)
     return int(rounded_time) in measurement_times
 
@@ -67,6 +69,16 @@ def get_p_sin(p):
 
 
 def exploration(times_all, ones_and_zeros_all, days_t0s, strategy, n_daily_measurements=20):
+    """
+    exploration function, performs temporl exploration based on strategy
+    :param times_all: array (n, ) - times of observations (interspaced with times of non-observations - zeros)
+    :param ones_and_zeros_all: array (n, ) - for each time 0 or 1
+    :param days_t0s: timestamps of beginnings of days
+    :param strategy: a function that take 2 parameters (probabilities: array, n: int) and returns
+    n indices based on probabilities (the indices are then used to select observation times)
+    :param n_daily_measurements: int, how many observations should be made each day
+    :return:  times of observation chosen based on strategy
+    """
 
     # do a random exploration for the first day
     t0 = days_t0s[0]
@@ -74,7 +86,7 @@ def exploration(times_all, ones_and_zeros_all, days_t0s, strategy, n_daily_measu
     measurement_times = set(np.random.choice(possible_measurement_times, n_daily_measurements, replace=False))
 
     # get predicate to determine if times are in the measurement time windows
-    filtering_predicate = np.vectorize(lambda x: in_measurement_window(x, t0, OBSERVATION_WINDOW,measurement_times))(times_all)
+    filtering_predicate = np.vectorize(lambda x: in_measurement_window(x, OBSERVATION_WINDOW,measurement_times))(times_all)
 
     times = times_all[filtering_predicate]
     ones_and_zeros = ones_and_zeros_all[filtering_predicate]
@@ -93,7 +105,7 @@ def exploration(times_all, ones_and_zeros_all, days_t0s, strategy, n_daily_measu
         measurement_times.update(possible_measurement_times[chosen_times])
 
         # get predicate to determine if times are in the measurement time windows
-        filtering_predicate = np.vectorize(lambda x: in_measurement_window(x, t0, OBSERVATION_WINDOW, measurement_times))(times_all)
+        filtering_predicate = np.vectorize(lambda x: in_measurement_window(x, OBSERVATION_WINDOW, measurement_times))(times_all)
 
         times = times_all[filtering_predicate]
         ones_and_zeros = ones_and_zeros_all[filtering_predicate]
@@ -101,9 +113,9 @@ def exploration(times_all, ones_and_zeros_all, days_t0s, strategy, n_daily_measu
     return measurement_times
 
 
-def save_train_data_and_times_for_exploration(path, measurement_times, t0, train_array_all):
+def save_train_data_and_times_for_exploration(path, measurement_times, train_array_all):
     times_all = train_array_all[:, 0]
-    filtering_predicate = np.vectorize(lambda x: in_measurement_window(x, t0, OBSERVATION_WINDOW, measurement_times))(times_all)
+    filtering_predicate = np.vectorize(lambda x: in_measurement_window(x, OBSERVATION_WINDOW, measurement_times))(times_all)
 
     np.save(path, train_array_all[filtering_predicate, :])
 
@@ -114,7 +126,8 @@ def main():
     times_all = np.load(config.fremen_times)
     vals_all = np.load(config.fremen_vals)
     measurement_times = exploration(times_all, vals_all, days_t0s, greedy_entropy)
-    print(0)
+    save_train_data_and_times_for_exploration('/home/filip/Desktop/data.npy',
+                                              measurement_times, np.load(config.train_array))
 
 
 if __name__ == '__main__':

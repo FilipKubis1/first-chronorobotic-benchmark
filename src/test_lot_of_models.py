@@ -32,7 +32,7 @@ times = np.loadtxt('../data/test_times.txt', dtype='int')
 
 # models, we need to compare
 # models = ['gmm_fremen', 'gmm_fremen_r0.5', 'gmm_fremen_r1', 'gmm_fremen_r2', 'fremen', 'daily']
-models = ['daily']
+models = ['gmm_fremen_c_5_p_5']
 
 france_route = np.array([(-5.0, 9.75), (2.0, 2.75), (-7.0, 0.75), (-5.0, 9.75)])
 england_route = np.array([(-6.0, -0.5), (10.0, -0.5), (1.0, 14.5), (-6.0, -0.5)])

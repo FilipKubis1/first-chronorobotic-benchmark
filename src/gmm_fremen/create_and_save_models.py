@@ -4,6 +4,9 @@ from src.gmm_fremen.gmm_fremen_model import GMMFremenModel
 from src.gmm_fremen.save_model_for_experiment import save_prediction_into_model_no_angle
 
 
+## TOTO JE POMOCNY A NEDULEZITY SKRIPT
+
+
 def main():
     r_s = [2, 1, 0.5]
     for r in r_s:

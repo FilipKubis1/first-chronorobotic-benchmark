@@ -21,12 +21,12 @@ def transform_england():
     np.save(config.england_test_arr, arr_ts)
 
 
-def main():
+def transform_france():
     data = load_data(config.train_csv)
     array = np.array(data)
     np.save(config.train_array, array)
 
 
 if __name__ == '__main__':
-    # main()
+    transform_france()
     transform_england()
